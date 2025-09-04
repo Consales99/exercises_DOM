@@ -1,75 +1,76 @@
 <!DOCTYPE html>
 <html lang="it">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Manipulation of the DOM 2 </title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
-    li {
-      margin: 5px 0;
-      list-style: none;
-    }
-    li span {
-      margin-left: 8px;
-    }
-  </style>
-</head>
-<body>
-  <div>
-    <h1>To-do List</h1>
-    <input type="text" id="taskInput" placeholder="Scrivi un nuovo task..." />
-    <button id="addBtn">Aggiungi</button>
-    <ul id="taskList"></ul>
-  </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> Manipulation of the DOM </title>
+    <style>
+      body { font-family: system-ui, Arial, sans-serif; padding: 20px; }
+      label { display: inline-block; width: 100px; }
+      .row { margin-bottom: 8px; }
+      code { background: #f6f6f6; padding: 2px 6px; border-radius: 4px; }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <form id="personForm">
+        <div class="row">
+          <label for="firstName">First Name:</label>
+          <input type="text" class="form-input" id="firstName" value="Mario" />
+        </div>
+        <div class="row">
+          <label for="lastName">Last Name:</label>
+          <input type="text" class="form-input" id="lastName" value="Rossi" />
+        </div>
+        <div class="row">
+          <label for="age">Age:</label>
+          <input type="number" class="form-input" id="age" value="25" />
+        </div>
+      </form>
 
-  <script>
-    const input = document.getElementById('taskInput');
-    const button = document.getElementById('addBtn');
-    const list = document.getElementById('taskList');
+      <p>
+        Attributo <code>data-person</code> del form: <br />
+        <code id="preview"></code>
+      </p>
+    </div>
 
-    // funzione per aggiungere un nuovo task
-    function addTask() {
-      const text = input.value.trim();
-      if (text === '') return; // non aggiunge se vuoto
+    <script>
+      // Riferimenti
+      const form = document.getElementById('personForm');
+      const firstNameEl = document.getElementById('firstName');
+      const lastNameEl  = document.getElementById('lastName');
+      const ageEl       = document.getElementById('age');
+      const preview     = document.getElementById('preview');
 
-      // creo il li
-      const li = document.createElement('li');
+      // Crea l'oggetto person dai valori degli input
+      function buildPerson() {
+        return {
+          firstName: firstNameEl.value.trim(),
+          lastName:  lastNameEl.value.trim(),
+          age: ageEl.value === '' ? null : Number(ageEl.value)
+        };
+      }
 
-      // creo la checkbox
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
+      // Aggiorna l'attributo data-person del form
+      function updateDataAttribute() {
+        const person = buildPerson();
+        const json = JSON.stringify(person);
+        // puoi usare form.setAttribute(...) oppure la dataset API:
+        form.dataset.person = json; // equivalente a setAttribute('data-person', json)
+        // debug/preview a schermo
+        preview.textContent = json;
+        console.log('Oggetto person:', person);
+        console.log('data-person:', form.getAttribute('data-person'));
+      }
 
-      // creo lo span con il testo del task
-      const span = document.createElement('span');
-      span.textContent = text;
+      // Inizializza all'avvio
+      document.addEventListener('DOMContentLoaded', updateDataAttribute);
 
-      // quando spunto la checkbox, barrare/sbarrare il testo
-      checkbox.addEventListener('change', () => {
-        span.style.textDecoration = checkbox.checked ? 'line-through' : 'none';
-        span.style.opacity = checkbox.checked ? '0.6' : '1';
+      // Aggiorna ogni volta che un input cambia
+      [firstNameEl, lastNameEl, ageEl].forEach(el => {
+        el.addEventListener('input', updateDataAttribute);
+        el.addEventListener('change', updateDataAttribute);
       });
-
-      // metto insieme gli elementi
-      li.appendChild(checkbox);
-      li.appendChild(span);
-      list.appendChild(li);
-
-      // pulisco input
-      input.value = '';
-      input.focus();
-    }
-
-    // aggiungo evento al bottone
-    button.addEventListener('click', addTask);
-
-    // aggiunta anche con "Enter"
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') addTask();
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>
