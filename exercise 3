@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>To-Do List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    li {
+      margin: 5px 0;
+      list-style: none;
+    }
+    li span {
+      margin-left: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <h1>To-do List</h1>
+    <input type="text" id="taskInput" placeholder="Scrivi un nuovo task..." />
+    <button id="addBtn">Aggiungi</button>
+    <ul id="taskList"></ul>
+  </div>
+
+  <script>
+    const input = document.getElementById('taskInput');
+    const button = document.getElementById('addBtn');
+    const list = document.getElementById('taskList');
+
+    // funzione per aggiungere un nuovo task
+    function addTask() {
+      const text = input.value.trim();
+      if (text === '') return; // non aggiunge se vuoto
+
+      // creo il li
+      const li = document.createElement('li');
+
+      // creo la checkbox
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+
+      // creo lo span con il testo del task
+      const span = document.createElement('span');
+      span.textContent = text;
+
+      // quando spunto la checkbox, barrare/sbarrare il testo
+      checkbox.addEventListener('change', () => {
+        span.style.textDecoration = checkbox.checked ? 'line-through' : 'none';
+        span.style.opacity = checkbox.checked ? '0.6' : '1';
+      });
+
+      // metto insieme gli elementi
+      li.appendChild(checkbox);
+      li.appendChild(span);
+      list.appendChild(li);
+
+      // pulisco input
+      input.value = '';
+      input.focus();
+    }
+
+    // aggiungo evento al bottone
+    button.addEventListener('click', addTask);
+
+    // aggiunta anche con "Enter"
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') addTask();
+    });
+  </script>
+</body>
+</html>
