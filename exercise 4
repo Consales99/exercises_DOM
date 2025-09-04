@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> Manipulation of the DOM </title>
+    <style>
+      body { font-family: system-ui, Arial, sans-serif; padding: 20px; }
+      label { display: inline-block; width: 100px; }
+      .row { margin-bottom: 8px; }
+      code { background: #f6f6f6; padding: 2px 6px; border-radius: 4px; }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <form id="personForm">
+        <div class="row">
+          <label for="firstName">First Name:</label>
+          <input type="text" class="form-input" id="firstName" value="Mario" />
+        </div>
+        <div class="row">
+          <label for="lastName">Last Name:</label>
+          <input type="text" class="form-input" id="lastName" value="Rossi" />
+        </div>
+        <div class="row">
+          <label for="age">Age:</label>
+          <input type="number" class="form-input" id="age" value="25" />
+        </div>
+      </form>
+
+      <p>
+        Attributo <code>data-person</code> del form: <br />
+        <code id="preview"></code>
+      </p>
+    </div>
+
+    <script>
+      // Riferimenti
+      const form = document.getElementById('personForm');
+      const firstNameEl = document.getElementById('firstName');
+      const lastNameEl  = document.getElementById('lastName');
+      const ageEl       = document.getElementById('age');
+      const preview     = document.getElementById('preview');
+
+      // Crea l'oggetto person dai valori degli input
+      function buildPerson() {
+        return {
+          firstName: firstNameEl.value.trim(),
+          lastName:  lastNameEl.value.trim(),
+          age: ageEl.value === '' ? null : Number(ageEl.value)
+        };
+      }
+
+      // Aggiorna l'attributo data-person del form
+      function updateDataAttribute() {
+        const person = buildPerson();
+        const json = JSON.stringify(person);
+        // puoi usare form.setAttribute(...) oppure la dataset API:
+        form.dataset.person = json; // equivalente a setAttribute('data-person', json)
+        // debug/preview a schermo
+        preview.textContent = json;
+        console.log('Oggetto person:', person);
+        console.log('data-person:', form.getAttribute('data-person'));
+      }
+
+      // Inizializza all'avvio
+      document.addEventListener('DOMContentLoaded', updateDataAttribute);
+
+      // Aggiorna ogni volta che un input cambia
+      [firstNameEl, lastNameEl, ageEl].forEach(el => {
+        el.addEventListener('input', updateDataAttribute);
+        el.addEventListener('change', updateDataAttribute);
+      });
+    </script>
+  </body>
+</html>
